@@ -1,11 +1,23 @@
 {
-  "name": "client",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "k5",
-  "license": "ISC"
+    "name": "codeboard-screencast-client",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "electron ."
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "electron": "^11.1.0",
+        "mathjs": "^9.5.1",
+        "robotjs": "^0.6.0",
+        "screenshot-desktop": "^1.12.3",
+        "socket.io-client": "^3.0.4",
+        "uuid": "^8.3.2"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.14"
+    }
 }
