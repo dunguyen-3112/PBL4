@@ -1,0 +1,13 @@
+.btn {
+    float: right;
+}
+
+.btn input {
+    display: inline-block;
+    font-family: Arial, Helvetica, sans-serif;
+    border: 2px solid #FFA122;
+    padding: 5px 20px;
+    border-radius: 8px;
+    color: #FFA122;
+    text-align: center;
+}
