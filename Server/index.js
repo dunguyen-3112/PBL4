@@ -7,10 +7,6 @@ app.get('/view', (req, res) => {
     res.sendFile(__dirname + '/display.html');
 })
 
-
-async function op() {
-    await open('http://localhost:5000/view');
-}
 io.on('connection', (socket) => {
 
     socket.on("join-message", (roomId) => {
@@ -44,5 +40,5 @@ io.on('connection', (socket) => {
 var server_port = process.env.YOUR_PORT || process.env.PORT || 5000;
 http.listen(server_port, () => {
     console.log("Started on : " + server_port);
-    op()
+    open('http://localhost:5000/view');
 })
