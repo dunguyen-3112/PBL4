@@ -7,7 +7,7 @@ window.onload = function() {
 }
 
 function startShare() {
-    ipcRenderer.send("start-share", {});
+    ipcRenderer.send("start-share",  document.getElementById('ip').value);
     document.getElementById("start").style.display = "none";
     document.getElementById("stop").style.display = "block";
 }
@@ -17,4 +17,9 @@ function stopShare() {
     document.getElementById("stop").style.display = "none";
     document.getElementById("code").innerHTML = '';
     document.getElementById("start").style.display = "block";
+}
+
+function copy() {
+    var x = document.getElementById("code").textContent;
+    navigator.clipboard.writeText(x)
 }

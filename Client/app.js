@@ -1,44 +1,22 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const { v4: uuidv4 } = require('uuid');
 const screenshot = require('screenshot-desktop');
-var robot = require("robotjs");
+const robot = require("robotjs");
 
-var socket = require('socket.io-client')('http://localhost:5000');
+var socket = null;
 var interval;
+var uuid = '';
 
 function createWindow() {
     const win = new BrowserWindow({
-        width: 500,
-        height: 150,
+        width: 600,
+        height: 260,
         webPreferences: {
             nodeIntegration: true
         }
     })
     win.removeMenu();
     win.loadFile('index.html')
-
-    socket.on("mouse-move", function(data) {
-        var obj = JSON.parse(data);
-        var x = obj.x;
-        var y = obj.y;
-
-        robot.moveMouse(x, y);
-    })
-
-    socket.on("mouse-click", function(data) {
-        var obj = JSON.parse(data);
-        var e = obj.e;
-        console.log(e)
-        if (e == 2) robot.mouseClick('right');
-        else robot.mouseClick();
-    })
-
-    socket.on("type", function(data) {
-        var obj = JSON.parse(data);
-        var key = obj.key;
-
-        robot.keyTap(key);
-    })
 }
 
 app.whenReady().then(createWindow)
@@ -54,10 +32,12 @@ app.on('activate', () => {
         createWindow()
     }
 })
-
 ipcMain.on("start-share", function(event, arg) {
-
-    var uuid = "test"; //uuidv4();
+    if (arg.length == 0 && arg == '') return;
+    socket = require('socket.io-client')('http://' + arg + ':5000');
+    
+    if (uuid == '')
+        uuid = uuidv4();
     socket.emit("join-message", uuid);
     event.reply("uuid", uuid);
 
@@ -70,13 +50,49 @@ ipcMain.on("start-share", function(event, arg) {
             obj.image = imgStr;
 
             socket.emit("screen-data", JSON.stringify(obj));
-        }).catch((err) => {
-
         })
     }, 500)
+    
+    socket.on("mouse-move", function(data) {
+        var obj = JSON.parse(data);
+        var x = obj.x*4/3;
+        var y = obj.y*4/3;
+        robot.moveMouse(x, y);
+    })
+
+    socket.on("connect", () => {
+	console.clear();
+        console.log("Connected successfully!");
+    });
+
+    socket.on("disconnect", () => {
+	console.clear();
+        console.log("Connection has been disconnected!");
+    });
+
+    socket.on("mouse-click", function(data) {
+        var obj = JSON.parse(data);
+        var e = obj.e;
+        if (e == 2) robot.mouseClick('right');
+        else robot.mouseClick();
+    })
+
+    socket.on("type", function(data) {
+        var obj = JSON.parse(data);
+        var key = obj.key;
+        if (key.localeCompare('shift') === 0) robot.keyToggle('shift', 'down')
+        if (key.localeCompare('control') === 0) robot.keyToggle('control', 'down')
+        else robot.keyTap(key);
+    })
+
+    socket.on("type_up", function(data) {
+        var obj = JSON.parse(data);
+        var key = obj.key;
+        robot.keyToggle(key, 'up')
+    })
 })
 
 ipcMain.on("stop-share", function(event, arg) {
-
     clearInterval(interval);
+    socket.disconnect()
 })
