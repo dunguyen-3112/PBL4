@@ -32,14 +32,31 @@ app.on('activate', () => {
         createWindow()
     }
 })
-ipcMain.on("ip", (err, data) => {
+ipcMain.on("start-share", function(event, arg) {
     if (data.length == 0 && data == '') return;
     socket = require('socket.io-client')('http://' + data + ':5000');
+    
+    if (uuid == '')
+        uuid = uuidv4();
+    socket.emit("join-message", uuid);
+    event.reply("uuid", uuid);
+
+    interval = setInterval(function() {
+        screenshot().then((img) => {
+            var imgStr = new Buffer(img).toString('base64');
+
+            var obj = {};
+            obj.room = uuid;
+            obj.image = imgStr;
+
+            socket.emit("screen-data", JSON.stringify(obj));
+        })
+    }, 500)
+    
     socket.on("mouse-move", function(data) {
         var obj = JSON.parse(data);
         var x = obj.x;
         var y = obj.y;
-
         robot.moveMouse(x, y);
     })
 
@@ -71,26 +88,6 @@ ipcMain.on("ip", (err, data) => {
         var key = obj.key;
         robot.keyToggle(key, 'up')
     })
-})
-
-ipcMain.on("start-share", function(event, arg) {
-    if (socket == null) return
-    if (uuid == '')
-        uuid = uuidv4();
-    socket.emit("join-message", uuid);
-    event.reply("uuid", uuid);
-
-    interval = setInterval(function() {
-        screenshot().then((img) => {
-            var imgStr = new Buffer(img).toString('base64');
-
-            var obj = {};
-            obj.room = uuid;
-            obj.image = imgStr;
-
-            socket.emit("screen-data", JSON.stringify(obj));
-        })
-    }, 500)
 })
 
 ipcMain.on("stop-share", function(event, arg) {
