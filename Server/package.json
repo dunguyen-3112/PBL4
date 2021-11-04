@@ -1,23 +1,30 @@
 {
-  "name": "codeboard-screencast-server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "engines": {
-    "node": "14.17.1"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.17.1",
-    "open": "^8.3.0",
-    "public-ip": "^4.0.4",
-    "socket.io": "^3.0.4"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.14"
-  }
+    "name": "server",
+    "version": "1.0.0",
+    "description": "",
+    "bin": "./index.js",
+    "pkg": {
+        "scripts": "build/**/*.js",
+        "assets": "views/**/*",
+        "targets": [
+            "node14-win-x64"
+        ]
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "config": "^3.3.6",
+        "express": "^4.17.1",
+        "open": "^8.3.0",
+        "public-ip": "^4.0.4",
+        "socket.io": "^3.0.4"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.14",
+        "pkg": "^5.4.1"
+    }
 }
