@@ -7,8 +7,7 @@ window.onload = function() {
 }
 
 function startShare() {
-    ipcRenderer.send("ip", document.getElementById('ip').value);
-    ipcRenderer.send("start-share", {});
+    ipcRenderer.send("start-share",  document.getElementById('ip').value);
     document.getElementById("start").style.display = "none";
     document.getElementById("stop").style.display = "block";
 }
