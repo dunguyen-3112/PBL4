@@ -5,14 +5,23 @@ var io = require('socket.io')(http);
 const open = require('open');
 const publicIp = require('public-ip');
 var config = require('config');
+var my_ip = '';
 
 (async() => {
-    console.log("My IP: " + await publicIp.v4());
+    my_ip = await publicIp.v4() + '';
 })();
 
 app.use("/public", express.static(__dirname + '/views'));
 app.get('/view', (req, res) => {
     res.sendFile(__dirname + '/views/display.html');
+})
+app.get('/', (req, res) => {
+    res.set({ "Content-Type": 'text/html' })
+    res.send("<html lang='en'><head><title>Teamviewer</title> <link rel='stylesheet' href='../public/style.css'>" +
+        "</head><body><div class='divcenter'><h2>My IP: " + my_ip +
+        "</h2><p style='font-size:20px;'>Please send IP Address to your partner and request the code to connect.<a href='view'>Redirects to the control page</a></p></div>" +
+        "</body></html>")
+    res.end()
 })
 
 io.on('connection', (socket) => {
