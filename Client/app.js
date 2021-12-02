@@ -77,12 +77,11 @@ ipcMain.on("start-share", function(event, arg) {
         else robot.mouseClick();
     })
 
-    socket.on("type", function(data) {
+    socket.on("type_down", function(data) {
         var obj = JSON.parse(data);
         var key = obj.key;
         if (key.localeCompare('shift') === 0) robot.keyToggle('shift', 'down')
         if (key.localeCompare('control') === 0) robot.keyToggle('control', 'down')
-        else robot.keyTap(key);
     })
 
     socket.on("type_up", function(data) {
