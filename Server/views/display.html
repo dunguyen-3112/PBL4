@@ -95,7 +95,19 @@
                     "key": key,
                     "room": room
                 };
-                socket.emit("type", JSON.stringify(obj));
+                socket.emit("type-up", JSON.stringify(obj));
+            })
+             $(window).bind("keydown", function(e) {
+                e.preventDefault();
+                var key = e.key;
+                key = key.toLowerCase()
+                if(key.localeCompare('shift') === 0 || key.localeCompare('control') === 0) {
+                    var obj = {
+                    "key": key,
+                    "room": room
+                    };
+                    socket.emit("type-down", JSON.stringify(obj));
+                }
             })
         }
     </script>
