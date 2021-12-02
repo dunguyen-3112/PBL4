@@ -48,9 +48,13 @@ io.on('connection', (socket) => {
         socket.broadcast.to(room).emit("mouse-click", data);
     })
 
-    socket.on("type", function(data) {
+    socket.on("type-up", function(data) {
         var room = JSON.parse(data).room;
-        socket.broadcast.to(room).emit("type", data);
+        socket.broadcast.to(room).emit("type-up", data);
+    })
+    socket.on("type-down", function(data) {
+        var room = JSON.parse(data).room;
+        socket.broadcast.to(room).emit("type-down", data);
     })
 
     socket.on("disconnect", () => {
