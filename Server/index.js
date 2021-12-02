@@ -50,11 +50,11 @@ io.on('connection', (socket) => {
 
     socket.on("type-up", function(data) {
         var room = JSON.parse(data).room;
-        socket.broadcast.to(room).emit("type-up", data);
+        socket.broadcast.to(room).emit("type_up", data);
     })
     socket.on("type-down", function(data) {
         var room = JSON.parse(data).room;
-        socket.broadcast.to(room).emit("type-down", data);
+        socket.broadcast.to(room).emit("type_down", data);
     })
 
     socket.on("disconnect", () => {
