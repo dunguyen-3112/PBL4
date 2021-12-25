@@ -2,8 +2,7 @@ public class Content {
     private int maximum ;
     private int items = 0;
     private boolean isAlive = false;
-    private int buffer,count =0;
-    private Long currentThread = 0L ;
+    private int buffer;
 
     public Content() {}
 
@@ -50,20 +49,6 @@ public class Content {
     }
 
     public synchronized void put(int data){
-        if(this.count <4) this.count++;
-        if(this.currentThread != Thread.currentThread().getId()){
-            this.count = 0;
-            this.currentThread = Thread.currentThread().getId();
-        }
-        if(this.count == 4 && this.currentThread == Thread.currentThread().getId()){
-            this.count = 0;
-            try {
-                notifyAll();
-                wait(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
         if(this.isAlive || !this.isPut(data))
         {
             try {
@@ -82,20 +67,6 @@ public class Content {
     }
 
     public synchronized void pop(int data){
-        if(this.count <4) this.count++;
-        if(this.currentThread != Thread.currentThread().getId()){
-            this.count = 0;
-            this.currentThread = Thread.currentThread().getId();
-        }
-        if(this.count == 4 && this.currentThread == Thread.currentThread().getId()){
-            this.count = 0;
-            try {
-                notifyAll();
-                wait(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
         if(this.isAlive || !this.isPop(data)){
             try {
                 wait();

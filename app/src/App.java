@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.swing.*;
 
-public class App extends JFrame implements ActionListener, KeyListener{
+public class App extends JFrame implements ActionListener, KeyListener,Runnable{
 
   JTextField txtMax;
   JButton btnAddPro,btnAddCon,btnSet,btnStart;
@@ -16,9 +16,12 @@ public class App extends JFrame implements ActionListener, KeyListener{
   private Content content;
   private int indexC = 1,indexP = 1,max = 9;
   private List<Thread> process;
+  private Panel Mypanel;
+  JLabel Mylbl;
 
   public static void main(String[] args) throws Exception {
-    new App();
+    App a = new App();
+    (new Thread(a)).start();
   }
 
   public App() {
@@ -31,6 +34,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
     Container con = this.getContentPane();
     con.setLayout(new FlowLayout());
     con.setBackground(Color.DARK_GRAY);
+   
 
     Font font  = new Font("Calibri",Font.BOLD,18);
     Font font1  = new Font("Calibri",Font.BOLD,12);
@@ -39,7 +43,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
     panel1.setLayout(new BorderLayout());
 
     JPanel panel11 = new JPanel();
-    JLabel lbl = new JLabel("Kích thước kho");
+    JLabel lbl = new JLabel("Tổng số linh kiện");
     txtMax = new JTextField(5);
     btnSet = new JButton("Đặt");
     btnSet.setFont(font);
@@ -85,8 +89,15 @@ public class App extends JFrame implements ActionListener, KeyListener{
     panelContent = new JPanel();
     panelContent.setLayout(new GridLayout(5,2));
     panelContent.setBackground(Color.WHITE);
-    panelContent.setPreferredSize(new Dimension(760,400));
+    panelContent.setPreferredSize(new Dimension(760,375));
+    Mylbl = new JLabel("");
+    Mypanel = new Panel();
+    Mypanel.setPreferredSize(new Dimension(400,25));
+    con.add(Mylbl);
+    con.add(Mypanel);
+    
     con.add(panelContent);
+    
 
     this.setVisible(true);
 
@@ -100,7 +111,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
   @Override
   public void actionPerformed(ActionEvent e) {
     if(e.getSource()== btnAddCon){
-      if(indexC+indexP-2>max){
+      if(process.size()>max){
         JOptionPane.showMessageDialog(null, "Tối đa tổng Nhà SX và nhà tiêu dùng la 10 !");
         return;
       }
@@ -108,7 +119,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JOptionPane.showMessageDialog(null, "Vui lòng đặt kích thước kho!");
       }
       else{
-        String name = "Consumer"+indexC;
+        String name = "Consumer "+indexC;
         Consumer c= new Consumer(content,name);
         Thread t =  new Thread(c);
         process.add(t);
@@ -117,14 +128,14 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JButton btn = new JButton("Stop");
         p1.add(btn);
         JButton btn1 = new JButton("Start");
-        p1.add(btn1);
+        p1.add(btn1);         
         JButton btn2 = new JButton("Exit");
         p1.add(btn2);
         panelContent.add(p1);
         indexC+=1;
         btn.addActionListener(new ActionListener() { 
           public void actionPerformed(ActionEvent e) { 
-            t.suspend();
+            t.suspend();                                                
           } 
         } );
          btn1.addActionListener(new ActionListener() { 
@@ -134,7 +145,8 @@ public class App extends JFrame implements ActionListener, KeyListener{
           } 
         } );
         btn2.addActionListener(new ActionListener() { 
-          public void actionPerformed(ActionEvent e) { 
+          public void actionPerformed(ActionEvent e) {
+            process.remove(t);
             t.stop();
             c.dispose();
             panelContent.remove(p1);
@@ -153,7 +165,7 @@ public class App extends JFrame implements ActionListener, KeyListener{
         JOptionPane.showMessageDialog(null, "Vui lòng đặt kích thước kho!");
       }
       else{
-        String name = "Producer"+indexP;
+        String name = "Producer "+indexP;
         Producer pr = new Producer(content,name);
         Thread t = new Thread(pr);
         process.add(t);
@@ -181,10 +193,10 @@ public class App extends JFrame implements ActionListener, KeyListener{
         } );
         btn2.addActionListener(new ActionListener() { 
           public void actionPerformed(ActionEvent e) { 
+            process.remove(t);
             t.stop();
             pr.dispose();
             panelContent.remove(p1);
-            max+=1;
           } 
         } );
         panelContent.revalidate();
@@ -196,15 +208,16 @@ public class App extends JFrame implements ActionListener, KeyListener{
         return;
       }
       for(int i=0;i<process.size();i++){
-        process.get(i).start();
+        if(!process.get(i).isAlive())
+          process.get(i).start();
       }
     }
     if(e.getSource() == btnSet){
       int number = 0;
       try{
         number = Integer.parseInt(txtMax.getText());
-        if(number>1000){
-          JOptionPane.showMessageDialog(null, "Kích thước tối đa 1000!");
+        if(number>5000){
+          JOptionPane.showMessageDialog(null, "Kích thước tối đa 5000!");
           return;
         }
         if(txtMax.getText().trim().equals("")){
@@ -240,9 +253,36 @@ public class App extends JFrame implements ActionListener, KeyListener{
     int number = 0;
     try {
       number = Integer.parseInt(txtMax.getText());
-      if(number>1000){
-        JOptionPane.showMessageDialog(null, "Kích thước tối đa 1000!");
+      if(number>5000){
+        JOptionPane.showMessageDialog(null, "Kích thước tối đa 5000!");
       }
     } catch (Exception e1) {}
+  }
+
+  @Override
+  public void run() {
+    float value1 = 0,value = 0;
+    int v = 0;
+    while(true){
+
+      if(content != null)
+      {
+        value = 0;
+        value1 = (((float)content.getItems()/(float)content.getMaximum()));
+        value = value1*400;
+        v= (int)value;
+      }
+        Mypanel.setY(v);
+        Mypanel.repaint();
+        Mylbl.setForeground(Color.RED);
+        value1*=100;
+        Mypanel.setTxt("Tồn kho "+String.format("%.2f", value1)+"%");
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      
+    }
   }
 }

@@ -1,6 +1,4 @@
-import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.*; 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,13 +6,13 @@ import java.util.List;
 import java.util.Random;
 
 import javax.swing.JFrame;
-import javax.swing.JRootPane;
 
 public class Producer extends JFrame implements Runnable{
 
     private Content content;
 
     private String _name;
+
 
     List<String> message;
 
@@ -57,12 +55,27 @@ public class Producer extends JFrame implements Runnable{
         this._name = _name;
     }
 
+
     @Override
     public void paint(Graphics g1) {
-        g.setColor(Color.DARK_GRAY);
+        g.setColor(Color.LIGHT_GRAY);
         g.fillRect(5, 0,758,370);
-        g.setColor(Color.CYAN);
         for(int i=0;i<message.size();i++){
+            if (i==0){
+                g.setColor(Color.BLUE);
+                g.fillRect(5, i*16, 758, 16);
+                g.setColor(Color.WHITE);
+                g.drawString(message.get(i), 25, (i+1)*16);
+                continue;
+            }
+            if(i%2==1){
+                g.setColor(Color.WHITE);
+                g.fillRect(5, i*16, 758, 16);
+                g.setColor(new Color(80,120,120));
+                g.drawString(message.get(i), 25, (i+1)*16);
+                continue;
+            }
+            g.setColor(new Color(240,240,240));
             g.drawString(message.get(i), 25, (i+1)*16);
         }
         g1.drawImage(img, 5, 30, null);
